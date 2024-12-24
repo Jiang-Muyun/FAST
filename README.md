@@ -1,7 +1,7 @@
 # FAST
 Code for paper named: Decoding Covert Speech from EEG Using a Functional Areas Spatio-Temporal Transformer (FAST), which is currently under review
 
-This code base is for reproducing the result on the public available dataset called BCI Competition 2020 Track #3: Imagined Speech Classification (BCIC2020Track3)
+This codebase is for reproducing the result on the public available dataset called BCI Competition 2020 Track #3: Imagined Speech Classification (BCIC2020Track3)
 
 ## Dataset Preparation
 1. Download the dataset from [https://osf.io/pq7vb/](https://osf.io/pq7vb/).
@@ -36,7 +36,7 @@ bash run_dual_GPU.sh
 ```
 
 ## Evaluating the Results
-After training, results will be saved in the `Results/FAST` directory, to calculate the accuracy, run:
+After training, results will be saved in the `Results/FAST` directory, to calculate accuracy, run:
 ```bash
 python3 FAST_BCIC2020Track3_eval.py
 ```
