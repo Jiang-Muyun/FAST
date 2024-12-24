@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+BCIC2020Track3/
+Processed/
+Results/
+Results_Debug/
+debug_FAST_BCIC2020Track3.py
+
 # C extensions
 *.so
 
