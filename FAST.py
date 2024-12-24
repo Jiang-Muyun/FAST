@@ -1,3 +1,10 @@
+"""
+Decoding Covert Speech from EEG Using a Functional Areas Spatio-Temporal Transformer (FAST)
+Code for reproducing results on BCI Competition 2020 Track #3: Imagined Speech Classification.
+Currently under review for publication.
+Contact: James Jiang Muyun (james.jiang@ntu.edu.sg)
+"""
+
 import os
 import random
 import sys
@@ -11,7 +18,6 @@ import torch.optim as optim
 import pytorch_lightning as pl
 from einops.layers.torch import Rearrange, Reduce
 from transformers import PretrainedConfig
-
 
 class AttentionBlock(nn.Module):
     def __init__(self, embed_dim, hidden_dim, num_heads, dropout=0.0):
