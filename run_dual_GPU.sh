@@ -7,12 +7,11 @@ cleanup() {
     echo "All processes terminated."
     exit 1
 }
-trap cleanup SIGINT # Trap SIGINT (Ctrl-C)
 
-# Start the processes in the background
-python3 train_FAST_BCIC2020Track3.py --gpu 0 --folds "0-7"   &
+python3 FAST_BCIC2020Track3_train.py --gpu 0 --folds "0-7"   &
 PID1=$!
-python3 train_FAST_BCIC2020Track3.py --gpu 1 --folds "7-15"  &
+python3 FAST_BCIC2020Track3_train.py --gpu 1 --folds "7-15"  &
 PID3=$!
 
+trap cleanup SIGINT
 wait $PID1 $PID2 # Wait for all processes to complete

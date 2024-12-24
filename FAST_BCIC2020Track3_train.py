@@ -20,6 +20,7 @@ logging.getLogger('lightning').setLevel(logging.WARNING)
 
 from FAST import FAST as Tower
 from utils import green, yellow
+from dataset_BCIC2020Track3 import Electrodes, Zones
 
 def seed_all(seed):
     random.seed(seed)
@@ -101,6 +102,7 @@ class EEG_Encoder_Module(pl.LightningModule):
         return self.model.loss(x, y)
 
 def Finetune(config, Data_X, Data_Y, logf, max_epochs=200, ckpt_pretrain=None):
+    seed_all(42)
     Pred, Real = [], []
     kf = KFold(n_splits=5, shuffle=False)
     for _train_idx, _test_idx in kf.split(Data_X):
@@ -129,15 +131,9 @@ def Finetune(config, Data_X, Data_Y, logf, max_epochs=200, ckpt_pretrain=None):
     np.savetxt(logf, np.array([Pred, Real]).T, delimiter=',', fmt='%d')
 
 if __name__ == '__main__':
-    seed_all(42)
-
     args = argparse.ArgumentParser()
     args.add_argument('--gpu', type=int, default=0)
     args.add_argument('--folds', type=str, default='0-15')
-    args.add_argument('--dim_cnn', type=int, default=32)
-    args.add_argument('--dim_token', type=int, default=32)
-    args.add_argument('--lay', type=int, default=4)
-    args.add_argument('--bs', type=int, default=350)
     args = args.parse_args()
 
     if '-' in args.folds:
@@ -146,13 +142,15 @@ if __name__ == '__main__':
     else:
         args.folds = [int(x) for x in args.folds.split(',')]
 
-    import dataset_BCIC2020Track3
-    n_subjects = len(dataset_BCIC2020Track3.SUBJECTS)
+    X, Y = load_standardized_h5('Processed/BCIC2020Track3.h5')
+    Run = f"Results/FAST/"
+    os.makedirs(f"{Run}", exist_ok=True)
+
     config = PretrainedConfig(
-        electrodes=dataset_BCIC2020Track3.Electrodes,
-        zone_dict=dataset_BCIC2020Track3.Zones,
-        dim_cnn=args.dim_cnn,
-        dim_token=args.dim_token,
+        electrodes=Electrodes,
+        zone_dict=Zones,
+        dim_cnn=32,
+        dim_token=32,
         seq_len=800,
         window_len=250,
         slide_step=125,
@@ -161,15 +159,11 @@ if __name__ == '__main__':
         num_heads=8,
         dropout=0.2,
     )
-    Run = f"Results/FAST/"
-    os.makedirs(f"{Run}", exist_ok=True)
-    X, Y = load_standardized_h5('Processed/BCIC2020Track3.h5')
     
-    for FOLD in range(n_subjects):
+    for FOLD in range(15):
         if FOLD not in args.folds:
             continue
         logf = f"{Run}/{FOLD}-Tune.csv"
         if os.path.exists(logf):
             continue
-
         Finetune(config, X[FOLD], Y[FOLD], logf, max_epochs=200)

@@ -7,4 +7,4 @@ for FOLD in range(15):
     pred, label = data[:, 0], data[:, 1]
     accuracy.append(np.mean(pred == label))
 
-print(f"Accuracy: {np.mean(accuracy):4f}, std: {np.std(accuracy):4f}")
+print(f"Accuracy: {np.mean(accuracy):4f}, Std: {np.std(accuracy):4f}")
