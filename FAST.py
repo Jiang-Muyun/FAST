@@ -40,7 +40,7 @@ class AttentionBlock(nn.Module):
         x = x + self.linear(self.layer_norm_2(x))
         return x
 
-class Spatial_Temporal_Tokenizer(nn.Module):
+class Head(nn.Module):
     def __init__(self, electrodes, zone_dict, feature_dim):
         super().__init__()
         self.index_dict = {}
@@ -103,7 +103,7 @@ class FAST(nn.Module):
         print(f" > CNN Dimension: {dim_cnn}")
         print(f" > Token Dimension: {dim_token}")
         
-        self.head = Spatial_Temporal_Tokenizer(electrodes, zone_dict, dim_cnn)
+        self.head = Head(electrodes, zone_dict, dim_cnn)
         self.input_layer = nn.Linear(dim_cnn * len(zone_dict), dim_token)
         self.transformer = nn.Sequential(*[AttentionBlock(dim_token, dim_token*2, num_heads, dropout=dropout) for _ in range(num_layers)])
         self.pos_embedding = nn.Parameter(torch.randn(1, self.n_tokens + 1, dim_token))  # +1 for CLS token
@@ -122,7 +122,7 @@ class FAST(nn.Module):
         feature = self.head(x)
         feature = einops.rearrange(feature, '(B N) Z F -> B N Z F', B=B)
         return feature
-    
+
     def forward(self, x):
         x = self.forward_head(x)
         x = einops.rearrange(x, 'B N Z F -> B N (Z F)')

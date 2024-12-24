@@ -90,18 +90,16 @@ class BasicDataset(Dataset):
         return sample, label
 
 class EEG_Encoder_Module(pl.LightningModule):
-    def __init__(self, config, lr_mode, max_epochs, niter_per_ep):
+    def __init__(self, config, max_epochs, niter_per_ep):
         super().__init__()
         self.config = config
-        self.lr_mode = lr_mode
-        self.epoch_acc = []
         self.model = Tower(config)
-        self.cosine_list = cosine_scheduler(1, 0.1, max_epochs, niter_per_ep, warmup_epochs=10)
+        self.cosine_lr_list = cosine_scheduler(1, 0.1, max_epochs, niter_per_ep, warmup_epochs=10)
         self.accuracy = torchmetrics.Accuracy('multiclass', num_classes = config.n_classes)
 
     def configure_optimizers(self):
         self.optimizer = optim.AdamW(self.parameters(), lr=0.0005)
-        self.scheduler = optim.lr_scheduler.LambdaLR(self.optimizer, lambda epoch: self.cosine_list[self.global_step-1])
+        self.scheduler = optim.lr_scheduler.LambdaLR(self.optimizer, lambda epoch: self.cosine_lr_list[self.global_step-1])
         return [self.optimizer], [{'scheduler': self.scheduler, 'interval': 'step'}]
 
     def training_step(self, batch, batch_idx):
@@ -149,8 +147,7 @@ if __name__ == '__main__':
     else:
         args.folds = [int(x) for x in args.folds.split(',')]
 
-    X, Y = load_standardized_h5('Processed/BCIC2020Track3.h5')
-    Run = f"Results/FAST/"
+    Run = "Results/FAST/"
     os.makedirs(f"{Run}", exist_ok=True)
 
     config = PretrainedConfig(
@@ -167,10 +164,11 @@ if __name__ == '__main__':
         dropout=0.2,
     )
     
-    for FOLD in range(15):
-        if FOLD not in args.folds:
+    X, Y = load_standardized_h5('Processed/BCIC2020Track3.h5')
+    for Fold in range(15):
+        if Fold not in args.folds:
             continue
-        logf = f"{Run}/{FOLD}-Tune.csv"
+        logf = f"{Run}/{Fold}-Tune.csv"
         if os.path.exists(logf):
             continue
-        Finetune(config, X[FOLD], Y[FOLD], logf, max_epochs=200)
+        Finetune(config, X[Fold], Y[Fold], logf, max_epochs=200)
