@@ -1,7 +1,7 @@
 # FAST
-Code for paper named: Decoding Covert Speech from EEG Using a Functional Areas Spatio-Temporal Transformer (FAST), which is currently under review
-
-This codebase is for reproducing the result on the public available dataset called BCI Competition 2020 Track #3: Imagined Speech Classification (BCIC2020Track3)
+- Code for paper named: Decoding Covert Speech from EEG Using a Functional Areas Spatio-Temporal Transformer (FAST), which is currently under review
+- This codebase is for reproducing the result on the publicly available dataset called BCI Competition 2020 Track #3: Imagined Speech Classification (BCIC2020Track3)
+- Contact: James Jiang Muyun (james.jiang@ntu.edu.sg)
 
 ## Dataset Preparation
 1. Download the dataset from [https://osf.io/pq7vb/](https://osf.io/pq7vb/).
