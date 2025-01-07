@@ -119,7 +119,7 @@ def Finetune(config, Data_X, Data_Y, logf, max_epochs=200, ckpt_pretrain=None):
         test_data = BasicDataset(x_test, y_test)
         test_loader = DataLoader(test_data, batch_size=len(x_test), shuffle=False, num_workers=0, pin_memory=True)
 
-        model = EEG_Encoder_Module(config, 'tune', max_epochs, len(train_loader))
+        model = EEG_Encoder_Module(config, max_epochs, len(train_loader))
         if ckpt_pretrain is not None:
             model.model.load_state_dict(torch.load(ckpt_pretrain, weights_only=True))
 
