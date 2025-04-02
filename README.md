@@ -29,9 +29,8 @@ The processed data will be saved in `Processed/BCIC2020Track3.h5`
 - To train the model, run:
 ```bash
 python3 BCIC2020Track3_train.py --gpu 0 --folds "0-15"
+# more than one GPU ?
+# bash BCIC2020Track3_run.sh
 ```
-- If you have more than one GPU, you can use the following command instead:
-```bash
-bash BCIC2020Track3_run.sh
-```
+
 After training, results will be saved in the `Results/FAST` directory, results will be automatically print out.
