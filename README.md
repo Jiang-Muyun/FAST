@@ -1,6 +1,6 @@
 # FAST
 - Code for paper named: Decoding Covert Speech from EEG Using a Functional Areas Spatio-Temporal Transformer (FAST), which is currently under review
-- This codebase is for reproducing the result on the publicly available dataset called BCI Competition 2020 Track #3: Imagined Speech Classification (BCIC2020Track3)
+- This codebase is for reproducing the result on the publicly available dataset BCI Competition 2020 Track #3: Imagined Speech Classification (BCIC2020Track3)
 - Contact: James Jiang Muyun (james.jiang@ntu.edu.sg)
 
 ## Dataset Preparation
@@ -21,22 +21,17 @@ BCIC2020Track3/
 ## Data Preprocessing
 Run the following command to preprocess the data:
 ```bash
-python dataset_BCIC2020Track3.py
+python BCIC2020Track3_preprocess.py
 ```
 The processed data will be saved in `Processed/BCIC2020Track3.h5`
 
 ## Training the Model
 - To train the model, run:
 ```bash
-python3 FAST_BCIC2020Track3_train.py --gpu 0 --folds "0-15"
+python3 BCIC2020Track3_train.py --gpu 0 --folds "0-15"
 ```
 - If you have more than one GPU, you can use the following command instead:
 ```bash
-bash run_dual_GPU.sh
+bash BCIC2020Track3_run.sh
 ```
-
-## Evaluating the Results
-After training, results will be saved in the `Results/FAST` directory, to calculate accuracy, run:
-```bash
-python3 FAST_BCIC2020Track3_eval.py
-```
+After training, results will be saved in the `Results/FAST` directory, results will be automatically print out.

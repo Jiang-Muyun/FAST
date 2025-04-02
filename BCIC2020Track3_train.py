@@ -12,9 +12,10 @@ import random
 import time
 import numpy as np
 import torch
-torch.set_num_threads(6)
+torch.set_num_threads(8)
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
+import torch.nn as nn
 import torchmetrics
 import logging
 import h5py
@@ -27,7 +28,7 @@ logging.getLogger('lightning').setLevel(logging.WARNING)
 
 from FAST import FAST as Tower
 from utils import green, yellow
-from dataset_BCIC2020Track3 import Electrodes, Zones
+from BCIC2020Track3_preprocess import Electrodes, Zones
 
 def seed_all(seed):
     random.seed(seed)
@@ -70,7 +71,7 @@ def inference_on_loader(model, loader):
     with torch.no_grad():
         Pred, Real = [], []
         for x, y in loader:
-            preds = torch.argmax(model(x.cuda())[0], dim=1).cpu()
+            preds = torch.argmax(model(x.cuda()), dim=1).cpu()
             Pred.append(preds)
             Real.append(y)
         Pred, Real = torch.cat(Pred), torch.cat(Real)
@@ -94,6 +95,7 @@ class EEG_Encoder_Module(pl.LightningModule):
         super().__init__()
         self.config = config
         self.model = Tower(config)
+        self.loss = nn.CrossEntropyLoss()
         self.cosine_lr_list = cosine_scheduler(1, 0.1, max_epochs, niter_per_ep, warmup_epochs=10)
         self.accuracy = torchmetrics.Accuracy('multiclass', num_classes = config.n_classes)
 
@@ -104,7 +106,8 @@ class EEG_Encoder_Module(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         x, y = batch
-        return self.model.loss(x, y)
+        pred = self.model(x)
+        return self.loss(pred, y)
 
 def Finetune(config, Data_X, Data_Y, logf, max_epochs=200, ckpt_pretrain=None):
     seed_all(42)
@@ -150,25 +153,40 @@ if __name__ == '__main__':
     Run = "Results/FAST/"
     os.makedirs(f"{Run}", exist_ok=True)
 
+    sfreq = 250
     config = PretrainedConfig(
         electrodes=Electrodes,
         zone_dict=Zones,
         dim_cnn=32,
         dim_token=32,
         seq_len=800,
-        window_len=250,
-        slide_step=125,
+        window_len=sfreq,
+        slide_step=sfreq//2,
+        head='Conv4Layers',
         n_classes=5,
         num_layers=4,
         num_heads=8,
-        dropout=0.2,
+        dropout=0.1,
     )
     
     X, Y = load_standardized_h5('Processed/BCIC2020Track3.h5')
-    for Fold in range(15):
-        if Fold not in args.folds:
+    for fold in range(15):
+        if fold not in args.folds:
             continue
-        logf = f"{Run}/{Fold}-Tune.csv"
-        if os.path.exists(logf):
+        flog = f"{Run}/{fold}-Tune.csv"
+        if os.path.exists(flog):
+            print(f"Skip {flog}")
             continue
-        Finetune(config, X[Fold], Y[Fold], logf, max_epochs=200)
+        Finetune(config, X[fold], Y[fold], flog, max_epochs=200)
+
+    accuracy = []
+    for fold in range(15):
+        flog = f"{Run}/{fold}-Tune.csv"
+        if not os.path.exists(flog):
+            print(f"Skip {flog}")
+            continue
+        data = np.loadtxt(flog, delimiter=',', dtype=int)
+        pred, label = data[:, 0], data[:, 1]
+        accuracy.append(np.mean(pred == label))
+
+    print(f"Accuracy: {np.mean(accuracy):3f}, Std: {np.std(accuracy):3f}")
