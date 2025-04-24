@@ -34,3 +34,14 @@ python3 BCIC2020Track3_train.py --gpu 0 --folds "0-15"
 ```
 
 After training, results will be saved in the `Results/FAST` directory, results will be automatically print out.
+
+# Cite
+Please cite our paper if you find this work is useful to you:
+```
+@article{jiang2025decoding,
+  title={Decoding Covert Speech from EEG Using a Functional Areas Spatio-Temporal Transformer},
+  author={Jiang, Muyun and Ding, Yi and Zhang, Wei and Teo, Kok Ann Colin and Fong, LaiGuan and Zhang, Shuailei and Guo, Zhiwei and Liu, Chenyu and Bhuvanakantham, Raghavan and Sim, Wei Khang Jeremy and others},
+  journal={arXiv preprint arXiv:2504.03762},
+  year={2025}
+}
+```
