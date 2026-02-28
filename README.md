@@ -41,6 +41,12 @@ FAST consists of two core components:
 
 The model is trained in two stages: **LOSO pre-training** (leave-one-subject-out) to learn generalizable cross-subject representations, followed by **LOBO fine-tuning** (leave-one-block-out) to adapt to individual subjects.
 
+### Network Architecture
+
+![FAST network architecture overview](figures/Network.png)
+
+*Overview of the FAST architecture. The Spatial-temporal Tokenizer partitions scalp electrodes into functional brain regions and extracts region-specific convolutional features, which are then processed by the Transformer Encoder to model cross-region spatial dependencies and temporal dynamics.*
+
 ### Experimental Protocol
 
 ![Experimental protocol showing block structure and utterance timing](figures/Protocal.png)
