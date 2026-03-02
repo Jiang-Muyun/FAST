@@ -1,6 +1,6 @@
 # FAST: Functional Areas Spatio-Temporal Transformer
 
-[![IEEE JBHI](https://img.shields.io/badge/IEEE%20JBHI-2026-blue.svg)](https://doi.org/10.1109/JBHI)
+[![IEEE JBHI](https://img.shields.io/badge/IEEE%20JBHI-2026-blue.svg)](https://doi.org/10.1109/JBHI.2026.3653025)
 
 **Decoding Covert Speech from EEG by Functional Areas Spatio-Temporal Transformer**
 
